@@ -2,11 +2,11 @@ const jwt = require("jsonwebtoken");
 const HasherHelper = require("../helpers/Hasher.helper");
 const HttpError = require("../helpers/HttpError.helpers");
 const Response = require("../helpers/Response.helpers");
-const { UserService } = require("../services/user.service");
+const { TeachService } = require("../services/teach.service");
 
-class UserController {
-  createNewUser = async (req, res) => {
-    const user = await UserService.findOne({ email: req.body.email });
+class TeachController {
+  createNewTeach = async (req, res) => {
+    const user = await TeachService.findOne({ email: req.body.email });
     console.log({
       username: req.body.username,
       email: req.body.email,
@@ -23,7 +23,7 @@ class UserController {
 
     req.body.password = hash;
 
-    const newUser = await UserService.create({ ...req.body });
+    const newUser = await TeachService.create({ ...req.body });
     // Generate access and refresh tokens for the new user
     const accessToken = jwt.sign(
       { _id: newUser._id, email: newUser.email, role: newUser.role },
@@ -47,7 +47,7 @@ class UserController {
     const { email, password } = req.body;
     console.log({ email, password });
 
-    let user = await UserService.findOne({ email });
+    let user = await TeachService.findOne({ email });
     console.log(user);
 
     if (!user) {
@@ -89,7 +89,7 @@ class UserController {
       req.body.password = hash;
     }
 
-    const user = await UserService.findByIdAndUpdate(req.user._id, {
+    const user = await TeachService.findByIdAndUpdate(req.user._id, {
       ...req.body,
     });
 
@@ -98,26 +98,26 @@ class UserController {
     Response(res).status(201).message("Successfully Updated!").send();
   };
   createAdminUser = async (req, res) => {
-    await UserService.create({ ...req.body, role: "Admin" });
+    await TeachService.create({ ...req.body, role: "Admin" });
     Response(res).status(201).message("Successfully Created").send();
   };
   getCurrentUser = async (req, res) => {
-    const user = await UserService.findById(req.user._id);
+    const user = await TeachService.findById(req.user._id);
     Response(res).body(user).send();
   };
   getAllUsers = async (req, res) => {
-    const user = await UserService.find({
+    const user = await TeachService.find({
       _id: { $nin: [req.user._id] },
     }).sort({ createdAt: -1 });
     Response(res).body(user).send();
   };
   getUserDetails = async (req, res) => {
     const { userId } = req.params;
-    const user = await UserService.findById(userId);
+    const user = await TeachService.findById(userId);
     if (!user) throw new HttpError(400, "No User Exists!");
 
     Response(res).body(user).send();
   };
 }
 
-module.exports.UserController = new UserController();
+module.exports.TeachController = new TeachController();

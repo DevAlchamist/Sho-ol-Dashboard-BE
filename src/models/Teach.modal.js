@@ -14,27 +14,34 @@ const Schema = new mongoose.Schema(
     },
     username: {
       type: String,
-      unique: true,
     },
     email: {
       type: String,
       unique: true,
     },
+    phone: {
+      type: Number,
+    },
     role: {
       type: String,
       enum: ["Admin", "User"],
-      default: "User",
+      default: "Admin",
     },
-    class: {
+    classes: {
       type: String,
       default: "Yet To Be Alloted",
-    },
-    phone: {
-      type: Number,
     },
     password: {
       type: String,
     },
+    education: [
+      {
+        institution: String,
+        degree: String,
+        fieldOfStudy: String,
+        yearOfGraduation: Number,
+      },
+    ],
   },
   {
     timestamps: true,
@@ -86,4 +93,4 @@ Schema.methods.generateVerifyEmailToken = function () {
   );
 };
 
-exports.User = mongoose.model("User", Schema);
+exports.Teach = mongoose.model("Teach", Schema);

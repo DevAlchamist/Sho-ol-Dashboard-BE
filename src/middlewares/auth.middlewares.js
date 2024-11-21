@@ -19,6 +19,7 @@ module.exports.Auth = async (req, res, next) => {
         message: "UnAuthorized",
       });
     }
+    console.log(token);
 
     // Assuming JWT_SECRET is loaded correctly from .env
     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
@@ -37,4 +38,16 @@ module.exports.Auth = async (req, res, next) => {
       message: "Invalid or expired token",
     });
   }
+};
+
+module.exports.Role = async (role) => {
+  return (req, res, next) => {
+    const userRole = req.user.role; // Assuming `req.user` contains the authenticated user's data
+
+    if (userRole !== role) {
+      return res.status(403).send("Forbidden");
+    }
+
+    next(); // User has the correct role, so proceed to the next middleware or route handler
+  };
 };
